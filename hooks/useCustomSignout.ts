@@ -8,7 +8,7 @@ export function useCustomSignOut() {
       const response = await fetch('/api/auth/custom-signout', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
       });
 

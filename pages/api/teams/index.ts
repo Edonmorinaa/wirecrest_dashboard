@@ -46,22 +46,29 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse) => {
 
 // Create a team
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
+  console.log('POST /api/teams - Starting, body:', req.body);
   const { name } = validateWithSchema(createTeamSchema, req.body);
-
+  console.log('Validated name:', name);
+  
   const user = await getCurrentUser(req, res);
+  console.log('User fetched:', user.id);
   const slug = slugify(name);
+  console.log('Generated slug:', slug);
 
   if (await isTeamExists(slug)) {
     throw new ApiError(400, 'A team with the slug already exists.');
   }
 
+  console.log('Creating team with params:', { userId: user.id, name, slug });
   const team = await createTeam({
     userId: user.id,
     name,
     slug,
   });
+  console.log('Team created:', team);
 
   recordMetric('team.created');
 
+  console.log('Metric recorded');
   res.status(200).json({ data: team });
 };
