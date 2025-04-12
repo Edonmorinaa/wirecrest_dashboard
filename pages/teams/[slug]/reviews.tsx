@@ -156,11 +156,7 @@ const ReviewsPage: NextPageWithLayout = () => {
   );
   const [filterDateRange, setFilterDateRange] = useState<
     'all' | '30days' | '90days' | '365days'
-  >('all');
-
-  // Sort state
-  const [sortBy, setSortBy] = useState<'date' | 'rating' | 'sentiment'>('date');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  >('all')
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);

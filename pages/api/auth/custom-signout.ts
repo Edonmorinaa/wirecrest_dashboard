@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { getAuthOptions, sessionTokenCookieName } from '@/lib/nextAuth';
 import { prisma } from '@/lib/prisma';
-import { getCookie } from 'cookies-next';
+import { deleteCookie, getCookie } from 'cookies-next';
 import env from '@/lib/env';
 import { deleteSession } from 'models/session';
 
@@ -42,10 +42,7 @@ export default async function handler(
       }
     }
 
-    res.setHeader(
-      'Set-Cookie',
-      'next-auth.session-token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; HttpOnly; Secure; SameSite=Lax'
-    );
+    deleteCookie(sessionTokenCookieName, { req, res });
 
     return res.status(200).json({ success: true });
   } catch (error) {
