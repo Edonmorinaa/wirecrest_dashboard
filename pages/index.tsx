@@ -15,7 +15,7 @@ const Home: NextPageWithLayout = () => {
   if (status === 'unauthenticated') {
     router.push('/auth/login');
   } else if (status === "authenticated") {
-    router.push('/auth/dashboard');
+    router.push('/dashboard');
   }
 
   return (

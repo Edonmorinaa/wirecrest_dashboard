@@ -15,13 +15,15 @@ const TeamNavigation = ({ slug, activePathname }: NavigationItemsProps) => {
       name: t('overview'),
       href: `/teams/${slug}/overview`,
       icon: CodeBracketIcon,
-      active: activePathname === `/teams/${slug}/overview`,
+      active: activePathname?.startsWith(`/teams/${slug}`) &&
+      activePathname.includes('overview'),
     },
     {
       name: t('reviews'),
       href: `/teams/${slug}/reviews`,
       icon: CodeBracketIcon,
-      active: activePathname === `/teams/${slug}/reviews`,
+      active: activePathname?.startsWith(`/teams/${slug}`) &&
+      activePathname.includes('reviews'),
     },
     {
       name: t('settings'),
@@ -29,7 +31,7 @@ const TeamNavigation = ({ slug, activePathname }: NavigationItemsProps) => {
       icon: Cog6ToothIcon,
       active:
         activePathname?.startsWith(`/teams/${slug}`) &&
-        !activePathname.includes('products'),
+        activePathname.includes('settings'),
     },
   ];
 

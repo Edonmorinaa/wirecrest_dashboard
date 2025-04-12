@@ -15,8 +15,7 @@ import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
   ExclamationCircleIcon,
-  InformationCircleIcon,
-  SparklesIcon,
+  InformationCircleIcon
 } from '@heroicons/react/24/outline';
 
 // Import Shadcn UI components
@@ -24,7 +23,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/components/ui/use-toast';
 import {
   Popover,
   PopoverContent,
@@ -80,7 +78,6 @@ const Overview: NextPageWithLayout<OverviewProps> = () => {
   const { t } = useTranslation('common');
   const router = useRouter();
   const { slug } = router.query;
-  const { toast } = useToast();
 
   // State for data and loading
   const [isLoading, setIsLoading] = useState(true);
@@ -204,51 +201,6 @@ const Overview: NextPageWithLayout<OverviewProps> = () => {
     };
   }, [reviews]);
 
-  // Function to sync reviews
-  const syncReviews = async () => {
-    if (!slug) return;
-
-    try {
-      const response = await fetch('/api/sync-google-reviews', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          teamSlug: slug,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error?.message || 'Failed to sync reviews');
-      }
-
-      // Update reviews if we have fresh data
-      if (data.freshData) {
-        setReviews(prev => [
-          ...prev,
-          ...data.reviews.filter(
-            (r: Review) => !prev.some(existingReview => existingReview.id === r.id)
-          ),
-        ]);
-      }
-
-      toast({
-        title: data.message || 'Successfully synced reviews',
-        duration: 3000,
-      });
-    } catch (error: any) {
-      console.error('Error syncing reviews:', error);
-      toast({
-        title: error.message || 'An error occurred during sync',
-        variant: "destructive",
-        duration: 3000,
-      });
-    }
-  };
-
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -315,10 +267,6 @@ const Overview: NextPageWithLayout<OverviewProps> = () => {
             )}
           </div>
         </div>
-        <Button onClick={syncReviews} variant="outline" className="flex items-center gap-2">
-          <SparklesIcon className="h-4 w-4" />
-          {t('sync-reviews')}
-        </Button>
       </div>
 
       {/* Business Info */}
