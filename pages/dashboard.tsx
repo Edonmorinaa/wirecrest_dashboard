@@ -16,7 +16,7 @@ const Dashboard: NextPageWithLayout = () => {
     }
 
     if (teams.length > 0) {
-      router.push(`/teams/${teams[0].slug}/overview`);
+      router.push(`/teams/${teams[0].slug}/settings`);
     } else {
       router.push('teams?newTeam=true');
     }
