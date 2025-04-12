@@ -3,20 +3,19 @@ import { defaultHeaders } from '@/lib/common';
 import { BusinessMarketIdentifier, MarketPlatform, Team } from '@prisma/client';
 import { useFormik } from 'formik';
 import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
 import React from 'react';
 import { Button } from 'react-daisyui';
-import toast from 'react-hot-toast';
 import type { ApiResponse } from 'types';
 
 import { AccessControl } from '../shared/AccessControl';
 import { z } from 'zod';
 import { urlSchema } from '@/lib/zod';
 import useBusinessMarketIdentifiers from 'hooks/useBusinessMarketIdentifiers';
+import { useToast } from '../ui/use-toast';
 
 const CreateMarketIdentifiers = ({ team }: { team: Team }) => {
-  const router = useRouter();
   const { t } = useTranslation('common');
+  const { toast } = useToast()
   const { businessMarketIdentifiers, mutateBusinessMarketIdentifiers } = useBusinessMarketIdentifiers({teamId: team.id});
     
   const googleMarketIdentifier: BusinessMarketIdentifier | undefined = businessMarketIdentifiers?.find((item) => {
@@ -55,13 +54,18 @@ const CreateMarketIdentifiers = ({ team }: { team: Team }) => {
       const json = (await response.json()) as ApiResponse<Team>;
 
       if (!response.ok) {
-        toast.error(json.error.message);
+        toast({
+          title: json.error.message,
+          variant: "destructive"
+        })
         return;
       }
 
-      toast.success(t('successfully-updated'));
+      toast({
+        title: "Updated Google Market Identifier"
+      })
       mutateBusinessMarketIdentifiers();
-      router.push(`/teams/${json.data.slug}/settings`);
+      values.url = ""
     },
   });
 
