@@ -6,11 +6,11 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { Button } from 'react-daisyui';
-import toast from 'react-hot-toast';
 import type { ApiResponse } from 'types';
 import * as Yup from 'yup';
 import Modal from '../shared/Modal';
 import { InputWithLabel } from '../shared';
+import { useToast } from '../ui/use-toast';
 
 interface CreateTeamProps {
   visible: boolean;
@@ -21,6 +21,7 @@ const CreateTeam = ({ visible, setVisible }: CreateTeamProps) => {
   const { t } = useTranslation('common');
   const { mutateTeams } = useTeams();
   const router = useRouter();
+  const { toast } = useToast()
 
   const formik = useFormik({
     initialValues: {
@@ -39,14 +40,20 @@ const CreateTeam = ({ visible, setVisible }: CreateTeamProps) => {
       const json = (await response.json()) as ApiResponse<Team>;
 
       if (!response.ok) {
-        toast.error(json.error.message);
+        toast({
+          title: "Error",
+          description: json.error.message,
+          variant: "destructive"
+        })
         return;
       }
 
       formik.resetForm();
       mutateTeams();
       setVisible(false);
-      toast.success(t('team-created'));
+      toast({
+        title: t("team-created")
+      })
       router.push(`/teams/${json.data.slug}/settings`);
     },
   });
