@@ -7,3 +7,8 @@ Sentry.init({
   ),
   debug: false,
 });
+
+// Add request error instrumentation
+export function onRequestError(error: Error, request: any, response: any) {
+  Sentry.captureRequestError(error, request, response);
+} 

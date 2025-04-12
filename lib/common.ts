@@ -32,7 +32,7 @@ export const maxLengthPolicies = {
   password: 70,
   team: 50,
   slug: 50,
-  domain: 253,
+  domain: 1000,
   domains: 1024,
   apiKeyName: 64,
   webhookDescription: 100,

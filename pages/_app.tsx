@@ -2,18 +2,19 @@ import app from '@/lib/app';
 import { SessionProvider } from 'next-auth/react';
 import { appWithTranslation } from 'next-i18next';
 import Head from 'next/head';
-import { Toaster } from 'react-hot-toast';
 import colors from 'tailwindcss/colors';
 import type { AppPropsWithLayout } from 'types';
 import mixpanel from 'mixpanel-browser';
 
 import '@boxyhq/react-ui/dist/react-ui.css';
 import '../styles/globals.css';
+import '../styles/shadcn.css';
 import { useEffect } from 'react';
 import env from '@/lib/env';
 import { Theme, applyTheme } from '@/lib/theme';
 import { Themer } from '@boxyhq/react-ui/shared';
 import { AccountLayout } from '@/components/layouts';
+import { Toaster } from '@/components/ui/toaster';
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const { session, ...props } = pageProps;
@@ -43,7 +44,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         <link rel="icon" href="https://boxyhq.com/img/favicon.ico" />
       </Head>
       <SessionProvider session={session}>
-        <Toaster toastOptions={{ duration: 4000 }} />
+        <Toaster />
         <Themer
           overrideTheme={{
             '--primary-color': colors.blue['500'],

@@ -70,18 +70,21 @@ model User {
 }
 
 model Team {
-  id              String       @id @default(uuid())
-  name            String
-  slug            String       @unique
-  domain          String?      @unique
-  defaultRole     Role         @default(MEMBER)
-  billingId       String?
-  billingProvider String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @default(now())
-  members         TeamMember[]
-  invitations     Invitation[]
-  apiKeys         ApiKey[]
+  id                   String       @id @default(uuid())
+  name                 String
+  slug                 String       @unique
+  domain               String?      @unique
+  defaultRole          Role         @default(MEMBER)
+  billingId            String?
+  billingProvider      String?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @default(now())
+  members              TeamMember[]
+  invitations          Invitation[]
+  apiKeys              ApiKey[]
+  businessProfile      GoogleBusinessProfile[]
+  marketIdentifiers    BusinessMarketIdentifier[]
+  reviews              Review[]
 
   @@index([billingId])
 }
@@ -184,6 +187,244 @@ model Price {
   service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 }
 
+model GoogleBusinessProfile {
+  id              String    @id @default(uuid())
+  teamId          String    
+  title           String
+  price           Float?
+  categoryName    String?
+  address         String?
+  neighborhood    String?
+  street          String?
+  city            String?
+  postalCode      String?
+  state           String?
+  countryCode     String?
+  phone           String?
+  phoneUnformatted String?
+  claimThisBusiness Boolean @default(false)
+  totalScore      Float?
+  permanentlyClosed Boolean @default(false)
+  temporarilyClosed Boolean @default(false)
+  placeId         String? @unique
+  fid             String?
+  cid             String?
+  reviewsCount    Int?
+  imagesCount     Int?
+  scrapedAt       DateTime?
+  googleFoodUrl   String?
+  hotelStars      Int?
+  checkInDate     DateTime?
+  checkOutDate    DateTime?
+  popularTimesLiveText String?
+
+  team            Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  location        Location?
+  reviewsDistribution ReviewsDistribution?
+  categories      Category[]
+  imageCategories ImageCategory[]
+  popularTimesHistogram PopularTimesHistogram?
+  reviewsTags     ReviewsTag[]
+  additionalInfo  AdditionalInfo?
+  questionsAndAnswers QuestionsAndAnswers?
+}
+
+model Location {
+  id        String  @id @default(uuid())
+  lat       Float
+  lng       Float
+  businessId String? @unique
+  business  GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+}
+
+model ReviewsDistribution {
+  id         String  @id @default(uuid())
+  oneStar    Int
+  twoStar    Int
+  threeStar  Int
+  fourStar   Int
+  fiveStar   Int
+  businessId String? @unique
+  business   GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+}
+
+model Category {
+  id         String  @id @default(uuid())
+  name       String
+  businessId String?
+  business   GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+}
+
+model ImageCategory {
+  id         String  @id @default(uuid())
+  name       String
+  businessId String?
+  business   GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+}
+
+model PopularTimesHistogram {
+  id         String  @id @default(uuid())
+  businessId String? @unique
+  business   GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+  days       Day[]
+}
+
+model Day {
+  id          String  @id @default(uuid())
+  name        String // Su, Mo, Tu, etc.
+  hours       Hour[]
+  histogramId String?
+  histogram   PopularTimesHistogram? @relation(fields: [histogramId], references: [id])
+}
+
+model Hour {
+  id          String  @id @default(uuid())
+  hour        Int
+  occupancyPercent Int
+  dayId       String?
+  day         Day? @relation(fields: [dayId], references: [id])
+}
+
+model ReviewsTag {
+  id         String  @id @default(uuid())
+  title      String
+  count      Int
+  businessId String?
+  business   GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+}
+
+model AdditionalInfo {
+  id         String  @id @default(uuid())
+  businessId String? @unique
+  business   GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+  
+  serviceOptions ServiceOption[]
+  highlights     Highlight[]
+  popularFor     PopularFor[]
+  accessibility  Accessibility[]
+  offerings      Offering[]
+  diningOptions  DiningOption[]
+  atmosphere     Atmosphere[]
+  crowd          Crowd[]
+  planning       Planning[]
+  payments       Payment[]
+  children       Child[]
+  parking        Parking[]
+}
+
+model ServiceOption {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+// Similar models for other AdditionalInfo categories
+model Highlight {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model PopularFor {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Accessibility {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Offering {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model DiningOption {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Atmosphere {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Crowd {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Planning {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Payment {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Child {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model Parking {
+  id             String  @id @default(uuid())
+  name           String
+  value          Boolean
+  additionalInfoId String?
+  additionalInfo AdditionalInfo? @relation(fields: [additionalInfoId], references: [id])
+}
+
+model QuestionsAndAnswers {
+  id         String  @id @default(uuid())
+  question   String
+  askDate    String
+  businessId String? @unique
+  business   GoogleBusinessProfile? @relation(fields: [businessId], references: [id])
+  answers    Answer[]
+}
+
+model Answer {
+  id          String  @id @default(uuid())
+  answer      String
+  qaId        String?
+  qa          QuestionsAndAnswers? @relation(fields: [qaId], references: [id])
+}
+
 model jackson_store {
   key        String    @id(map: "_jackson_store_key") @db.VarChar(1500)
   value      String
@@ -218,3 +459,148 @@ model jackson_ttl {
   @@index([expiresAt], map: "_jackson_ttl_expires_at")
   @@ignore
 }
+
+enum MarketPlatform {
+  GOOGLE_MAPS
+  FACEBOOK
+  YELP
+  TRIPADVISOR
+  INSTAGRAM
+}
+model BusinessMarketIdentifier {
+  id          String         @id @default(uuid())
+  teamId      String
+  platform    MarketPlatform
+  url         String         // The URL or identifier for the business profile on this platform
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now())
+
+  team        Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, platform], name: "teamId_platform")
+  @@index([teamId])
+}
+
+model Review {
+  id               String         @id @default(uuid())
+  teamId           String         // To link reviews to a specific team
+  externalId       String         // Original review ID from the source platform
+  source           MarketPlatform // GOOGLE_MAPS, FACEBOOK, YELP
+  
+  // Core review data needed for display
+  author           String         // Name of reviewer
+  authorImage      String?        // Profile picture URL
+  rating           Float          // Rating (1-5 scale)
+  text             String         // Review content
+  date             DateTime       // When the review was posted
+  
+  // Media
+  photoCount       Int            @default(0)
+  photoUrls        String[]       // Array of photo URLs
+  
+  // Response management
+  reply            String?        // Business's response
+  replyDate        DateTime?      // When the reply was posted
+  hasReply         Boolean        @default(false)
+  
+  // Analytics data shown in charts/metrics
+  sentiment        Float?         // -1.0 to 1.0 score for sentiment analysis
+  keywords         String[]       // Extracted keywords for tag clouds
+  topics           String[]       // Topics mentioned in the review (service, food, etc.)
+  emotional        String?        // Very negative, negative, neutral, positive, very positive
+  actionable       Boolean        @default(false) // Whether the review suggests action
+  responseUrgency  Int?           // Score 1-10 indicating how urgently a response is needed
+  competitorMentions String[]     // Names of competitors mentioned in the review
+  comparativePositive Boolean?    // Is the comparison positive for the business?
+  
+  // Business workflow fields
+  isRead           Boolean        @default(false)
+  isImportant      Boolean        @default(false)
+  labels           String[]       // Custom labels/tags
+  
+  // Metadata
+  language         String?        // Language code
+  scrapedAt        DateTime       // When the review was last updated
+  sourceUrl        String?        // Direct link to the review on the platform
+  
+  // Timestamps
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  
+  // Relations
+  team             Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  // References to source-specific data
+  googleReview     GoogleReview?
+  facebookReview   FacebookReview?
+  yelpReview       YelpReview?
+  
+  @@unique([teamId, source, externalId])
+  @@index([teamId, source, date])
+}
+
+model GoogleReview {
+  id                       String         @id @default(uuid())
+  reviewId                 String         @unique
+  review                   Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reviewerId               String         // Unique identifier for the reviewer
+  reviewerUrl              String         // URL to the reviewer's profile
+  name                     String         // Name of the reviewer
+  reviewerNumberOfReviews  Int            // Number of reviews written by the reviewer
+  isLocalGuide             Boolean        // Indicates if the reviewer is a local guide
+  reviewerPhotoUrl         String         // URL to the reviewer's photo
+  text                     String?        // Review text
+  textTranslated           String?        // Translated review text
+  publishAt                String         // Time since the review was published
+  publishedAtDate          DateTime       // Date when the review was published
+  likesCount               Int            // Number of likes the review received
+  reviewUrl                String         // URL to the review
+  reviewOrigin             String         // Origin of the review (e.g., Google)
+  stars                    Int            // Star rating given by the reviewer
+  rating                   Float?         // Additional rating information
+  responseFromOwnerDate    DateTime?     // Date of response from the owner
+  responseFromOwnerText    String?       // Text of the response from the owner
+  reviewImageUrls          String[]       // Array of URLs for images in the review
+  reviewContext            Json?          // Context of the review (e.g., service type, meal type)
+  reviewDetailedRating      Json?         // Detailed rating breakdown (e.g., food, service, atmosphere)
+  visitedIn                String?        // Information about when the reviewer visited
+  originalLanguage         String?        // Original language of the review
+  translatedLanguage       String?        // Language the review was translated to
+  isAdvertisement           Boolean        // Indicates if the review is an advertisement
+  placeId                  String         // Unique identifier for the place
+  location                 Json           // Location details (latitude and longitude)
+  address                  String         // Address of the place
+  neighborhood             String?        // Neighborhood of the place
+  street                   String         // Street name of the place
+  city                     String         // City where the place is located
+  postalCode               String?        // Postal code of the place
+  state                    String?        // State where the place is located
+  countryCode              String         // Country code of the place
+  categoryName             String         // Category of the place (e.g., Restaurant)
+  categories               String[]       // Array of categories the place belongs to
+  title                    String         // Title of the place
+  totalScore               Float          // Overall score of the place
+  permanentlyClosed        Boolean        // Indicates if the place is permanently closed
+  temporarilyClosed        Boolean        // Indicates if the place is temporarily closed
+  reviewsCount             Int            // Total number of reviews for the place
+  url                      String         // URL to the place
+  price                    String?        // Price range of the place
+  cid                      String         // Unique identifier for the place in Google
+  fid                      String         // Unique identifier for the place in the source
+  imageUrl                 String         // URL to the main image of the place
+  scrapedAt                DateTime       // Date when the data was scraped
+  language                 String         // Language of the review
+}
+
+model FacebookReview {
+  id               String         @id @default(uuid())
+  reviewId         String         @unique
+  review           Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade, map: "FacebookReview_reviewId_fkey")
+}
+
+model YelpReview {
+  id               String         @id @default(uuid())
+  reviewId         String         @unique
+  review           Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade, map: "YelpReview_reviewId_fkey")
+}
+

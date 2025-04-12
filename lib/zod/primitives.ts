@@ -262,3 +262,17 @@ export const memberId = z
     maxLengthPolicies.memberId,
     `Member id should be at most ${maxLengthPolicies.memberId} characters`
   );
+
+  export const teamId = z
+  .string({
+    required_error: 'Team id is required',
+    invalid_type_error: 'Team id must be a string',
+  })
+  .nonempty()
+
+  export const marketPlatform = z
+  .string({
+    required_error: 'Market Platform is required',
+    invalid_type_error: 'Market Platform must be a string',
+  })
+  .nonempty()

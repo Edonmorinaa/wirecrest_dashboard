@@ -25,6 +25,7 @@ import {
   name,
   image,
   eventTypes,
+  marketPlatform
 } from './primitives';
 
 export const createApiKeySchema = z.object({
@@ -171,3 +172,12 @@ export const ssoVerifySchema = z
   .refine((data) => data.email || data.slug, {
     message: 'At least one of email or slug is required',
   });
+
+  export const createBusinessMarketIndetifiersSchema = z.object({
+    platform: marketPlatform,
+    url: url
+  });
+
+  export const urlSchema = z.object({
+    url: url
+  })

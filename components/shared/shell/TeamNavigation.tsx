@@ -12,10 +12,16 @@ const TeamNavigation = ({ slug, activePathname }: NavigationItemsProps) => {
 
   const menus: MenuItem[] = [
     {
-      name: t('all-products'),
-      href: `/teams/${slug}/products`,
+      name: t('overview'),
+      href: `/teams/${slug}/overview`,
       icon: CodeBracketIcon,
-      active: activePathname === `/teams/${slug}/products`,
+      active: activePathname === `/teams/${slug}/overview`,
+    },
+    {
+      name: t('reviews'),
+      href: `/teams/${slug}/reviews`,
+      icon: CodeBracketIcon,
+      active: activePathname === `/teams/${slug}/reviews`,
     },
     {
       name: t('settings'),

@@ -1,6 +1,7 @@
 import { Error, Loading } from '@/components/shared';
 import { AccessControl } from '@/components/shared/AccessControl';
 import { RemoveTeam, TeamSettings, TeamTab } from '@/components/team';
+import CreateMarketIdentifiers from '@/components/team/UpdateMarketIdentifiers';
 import env from '@/lib/env';
 import useTeam from 'hooks/useTeam';
 import type { GetServerSidePropsContext } from 'next';
@@ -31,6 +32,7 @@ const Settings = ({ teamFeatures }: { teamFeatures: TeamFeature }) => {
         <TeamSettings team={team} />
         <AccessControl resource="team" actions={['delete']}>
           <RemoveTeam team={team} allowDelete={teamFeatures.deleteTeam} />
+          <CreateMarketIdentifiers team={team}/>
         </AccessControl>
       </div>
     </>
