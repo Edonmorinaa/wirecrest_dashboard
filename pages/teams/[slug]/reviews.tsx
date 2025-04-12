@@ -1353,11 +1353,15 @@ const ReviewsPage: NextPageWithLayout = () => {
                   '""'
                 );
               } else {
-                keywordsStr = review.keywords.replace(/"/g, '""');
+                const keywords = review.keywords as string[]
+                keywordsStr = keywords.map(keyword => keyword.replace(/"/g, '""')) // Apply replace to each string
+                .join(','); // Join the array back into a single string, if needed
+              
               }
             } catch {
-              // If parsing fails, just use the string
-              keywordsStr = review.keywords.replace(/"/g, '""');
+              const keywords = review.keywords as string[]
+              keywordsStr = keywords.map(keyword => keyword.replace(/"/g, '""')) // Apply replace to each string
+              .join(','); // Join the array back into a single string, if needed
             }
           } else if (Array.isArray(review.keywords)) {
             // If keywords is already an array
